@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+# Next.js / build
+.next/
+out/
+build/
+dist/
+# env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+# logs
+npm-debug.log*
+yarn-error.log*
+# test output
+coverage/
+playwright-report/
+test-results/
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+# personal data from interviews / pilot (never commit)
+data/private/
