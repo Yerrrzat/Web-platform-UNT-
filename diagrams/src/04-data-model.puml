@@ -1,0 +1,117 @@
+@startuml data-model
+title Data Model (draft ER)
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+hide circle
+entity User {
+  *id : uuid
+  --
+  email : text <<unique>>
+  password_hash : text
+  display_name : text
+  grade : int
+  locale : text
+  email_verified_at : timestamp
+  role : enum(student, admin)
+}
+entity Subscription {
+  *id : uuid
+  --
+  user_id : FK
+  plan : enum(monthly, until_unt)
+  status : enum(active, expired, cancelled)
+  paid_until : timestamp
+  provider_ref : text
+}
+entity Payment {
+  *id : uuid
+  --
+  subscription_id : FK
+  amount_kzt : int
+  status : enum
+  provider_event_id : text <<unique>>
+  created_at : timestamp
+}
+entity TestVersion {
+  *id : uuid
+  --
+  number : int
+  title : text
+  difficulty : int
+  access : enum(free, premium)
+  status : enum(draft, published)
+  time_limit_min : int
+}
+entity Item {
+  *id : uuid
+  --
+  version_id : FK
+  position : int (1..40)
+  type : enum(single, multiple, matching, context)
+  body : jsonb
+  options : jsonb
+  answer_key : jsonb
+  explanation : text
+  max_points : int
+}
+entity Topic {
+  *id : uuid
+  --
+  code : text
+  name_kk : text
+  name_ru : text
+}
+entity ItemTopic {
+  item_id : FK
+  topic_id : FK
+}
+entity Attempt {
+  *id : uuid
+  --
+  user_id : FK
+  version_id : FK
+  started_at : timestamp
+  deadline_at : timestamp
+  submitted_at : timestamp
+  score : int
+}
+entity Answer {
+  *id : uuid
+  --
+  attempt_id : FK
+  item_id : FK
+  response : jsonb
+  points : int
+  flagged : bool
+  updated_at : timestamp
+}
+entity Event {
+  *id : bigint
+  --
+  user_id : FK?
+  name : text
+  props : jsonb
+  created_at : timestamp
+}
+entity ErrorReport {
+  *id : uuid
+  --
+  user_id : FK
+  item_id : FK
+  comment : text
+  status : enum(open, fixed, rejected)
+}
+
+User ||--o{ Subscription
+Subscription ||--o{ Payment
+TestVersion ||--|{ Item
+Item ||--o{ ItemTopic
+Topic ||--o{ ItemTopic
+User ||--o{ Attempt
+TestVersion ||--o{ Attempt
+Attempt ||--|{ Answer
+Item ||--o{ Answer
+User ||--o{ Event
+User ||--o{ ErrorReport
+Item ||--o{ ErrorReport
+@enduml
