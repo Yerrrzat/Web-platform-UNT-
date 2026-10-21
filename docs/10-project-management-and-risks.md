@@ -6,7 +6,7 @@
 |---|---|
 | Git repository | https://github.com/Yerrrzat/Web-platform-UNT- |
 | Submitted version | Git tag `prob-period-1` |
-| YouTrack project | *Insert link* (project key **UNT**). The backlog is also exported in `youtrack/tasks.csv` |
+| YouTrack project | https://yerzat-diploma.youtrack.cloud/projects/UNT (project key **UNT**). The backlog is also exported in `youtrack/tasks.csv` |
 | Documentation | `docs/` (this report), `diagrams/`, `prototype/` |
 
 ## 10.2 Roles and responsibilities

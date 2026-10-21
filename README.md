@@ -40,7 +40,7 @@ No runnable application code yet; this is expected at this stage. Setup instruct
 Next.js (TypeScript) · PostgreSQL + Prisma · Auth.js · local payment aggregator (test mode) · Vitest + Playwright · GitHub Actions · Vercel + Neon/Supabase. Rationale: [docs/05](docs/05-technology-comparison.md).
 
 ## Links
-- **YouTrack:** _insert project link_ (key `UNT`); backlog export: [youtrack/tasks.csv](youtrack/tasks.csv)
+- **YouTrack:** https://yerzat-diploma.youtrack.cloud/projects/UNT (key `UNT`, board "Разработка проекта UNT"); backlog export: [youtrack/tasks.csv](youtrack/tasks.csv)
 - **Prototype:** [prototype/index.html](prototype/index.html) (open in a browser) · online (GitHub Pages): https://yerrrzat.github.io/Web-platform-UNT-/prototype/
 - **Documentation:**
   1. [Project proposal](docs/01-project-proposal.md)
