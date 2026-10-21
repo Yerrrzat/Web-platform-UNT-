@@ -1,0 +1,29 @@
+Issue Id,Summary,Type,Priority,State,Assignee,Due Date,Sprint,Expected outcome,Acceptance criteria,Requirements
+UNT-1,Create repository structure and README,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,Repository with folders docs/diagrams/prototype/src/tests/config and README,README has all items from Step 3 of repo requirements; .gitignore and .env.example present,—
+UNT-2,Write project proposal and scope,Task,Critical,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/01-project-proposal.md,Contains title; supervisor; problem; users; aim; objectives; outcomes; in/out scope,O1–O8
+UNT-3,Collect evidence of relevance (3–5 interviews),Task,Critical,In Progress,Yerzat Qaldyqan,2026-10-24,S1,docs/02-evidence-of-relevance.md with interview table filled,≥3 anonymised interviews recorded; verified vs assumed table updated,O1
+UNT-4,Literature review with analysis table,Task,Critical,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/03-literature-review.md,≥12 sources incl. ≥8 peer-reviewed; analysis table; implications,O2
+UNT-5,Compare existing systems,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/04-existing-systems-comparison.md,5 systems × 8 criteria; sources for each claim; unverified marked n/s,O2
+UNT-6,Technology comparison and Next.js learning spike,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/05-technology-comparison.md,≥3 decisions × ≥3 alternatives; weighted scores; justification,O3
+UNT-7,Initial requirements with acceptance criteria,Task,Critical,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/06-requirements-specification.md,All Must requirements have testable acceptance criteria; MoSCoW priorities,O3
+UNT-8,Architecture diagrams (context / use case / component / ER),Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,diagrams/src/*.puml and diagrams/png/*.png; docs/07,Diagrams consistent with requirements (alignment table),O3
+UNT-9,Clickable prototype of key scenarios,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,prototype/index.html + screenshots,Scenarios S1–S6 demonstrable; Kazakh UI,FR-03…FR-17
+UNT-10,Verification and evaluation plan,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/09-verification-and-evaluation-plan.md,Test levels mapped to requirements; metrics with targets; baseline defined,O6
+UNT-11,Project management plan and risk register,Task,Major,Done,Yerzat Qaldyqan,2026-10-23,S1,docs/10-project-management-and-risks.md,Milestones; responsibilities; ≥8 risks with mitigation; dependencies,O8
+UNT-12,Supervisor review of probationary-period materials,Task,Critical,To Do,Yerzat Qaldyqan,2026-10-24,S1,docs/11-supervisor-feedback.md filled,Supervisor comments recorded with decision and resulting change,—
+UNT-13,Tag prob-period-1 and submit form,Task,Critical,To Do,Yerzat Qaldyqan,2026-10-24,S1,Tag prob-period-1; PDF report uploaded,Tag exists on reviewed main; form submitted before 18:00 24 Oct,—
+UNT-14,Scaffold Next.js app with CI (lint + Vitest + Playwright),Task,Critical,To Do,Yerzat Qaldyqan,2026-11-07,S2,Running app skeleton; GitHub Actions pipeline,CI green on PR; README setup instructions work on a clean machine,NFR-10
+UNT-15,Database schema and migrations (Prisma),Task,Critical,To Do,Yerzat Qaldyqan,2026-11-07,S2,Prisma schema matching data model,Migrations apply on empty DB; seed script loads 1 version,FR-14
+UNT-16,Authentication: register / verify / login / reset,Feature,Critical,To Do,Yerzat Qaldyqan,2026-11-21,S3,Auth module,FR-01 and FR-02 acceptance criteria pass in E2E,FR-01 FR-02 NFR-03
+UNT-17,Version import with schema validation and preview,Feature,Critical,To Do,Yerzat Qaldyqan,2026-11-21,S3,Admin import page,Invalid file lists errors by item; valid file creates draft,FR-14 FR-15
+UNT-18,Item renderer (code / tables / images),Feature,Critical,To Do,Yerzat Qaldyqan,2026-11-21,S3,Shared renderer component,Same output in preview and runner; snapshot tests,FR-07
+UNT-19,Timed test session with autosave and resume,Feature,Critical,To Do,Yerzat Qaldyqan,2026-12-05,S4,Test runner,Reload restores answers and time; auto-submit at 00:00; no keys sent,FR-05 NFR-02 NFR-04
+UNT-20,Scoring engine (UNT rules),Feature,Critical,To Do,Yerzat Qaldyqan,2026-12-05,S4,Pure scoring module,≥95% branch coverage; all item types,FR-06
+UNT-21,Results page: explanations + topic breakdown + history,Feature,Critical,To Do,Yerzat Qaldyqan,2026-12-19,S5,Results and history pages,FR-08 FR-09 FR-10 criteria pass,FR-08 FR-09 FR-10
+UNT-22,Freemium access and subscription billing (test mode),Feature,Critical,To Do,Yerzat Qaldyqan,2027-01-16,S6,Billing module + paywall,Webhook signature verified; plan updates ≤1 min; expiry relocks,FR-11 FR-12 FR-13
+UNT-23,Event tracking and admin dashboard,Feature,Major,To Do,Yerzat Qaldyqan,2027-01-30,S7,Events table + dashboard + CSV export,Counts match SQL checks,FR-16 FR-17
+UNT-24,Prepare and import 10 versions with explanations,Task,Critical,To Do,Yerzat Qaldyqan,2027-01-30,S5–S7,10 published versions,Validator passes; teacher review of 1 version,O5
+UNT-25,Hallway usability test of prototype (3 students),Task,Normal,To Do,Yerzat Qaldyqan,2026-11-14,S2,Usability notes,Task success/time recorded for S1–S3,NFR-06
+UNT-26,Deploy staging and production,Task,Major,To Do,Yerzat Qaldyqan,2027-01-30,S7,Live URL,Lighthouse ≥80; uptime monitor active,NFR-01 NFR-11
+UNT-27,Pilot with ≥30 students (4 weeks),Task,Critical,To Do,Yerzat Qaldyqan,2027-03-15,Pilot,Pilot dataset + survey,Metrics M1–M9 computed,O6
+UNT-28,Commercialization assessment,Task,Critical,To Do,Yerzat Qaldyqan,2027-04-15,Analysis,Business model; unit economics; go/no-go,Uses pilot data; break-even computed,O7
