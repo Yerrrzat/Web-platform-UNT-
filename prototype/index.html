@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Informatika ҰБТ Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Noto+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: exam-booth app shell — top bar + one working panel per view, answer sheet grid on the side of the runner */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#14201c; --muted:#5b6b65; --line:#d6dedb;
+  --accent:#0b6e4f; --accent-ink:#ffffff; --accent-soft:#dcefe7;
+  --flag:#b7791f; --good:#1e7d3a; --bad:#b42318; --code-bg:#0f1a17; --code-ink:#d7efe5;
+  --f-display:"Unbounded", "Noto Sans", system-ui, sans-serif;
+  --f-body:"Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1513; --surface:#16201d; --ink:#e4ece9; --muted:#9aaba5; --line:#2a3833;
+  --accent:#3fbf8f; --accent-ink:#06130e; --accent-soft:#183a2e; --flag:#e0a84a; --good:#4cc373; --bad:#f2786d;
+  --code-bg:#08100d; --code-ink:#cfeadf; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1513; --surface:#16201d; --ink:#e4ece9; --muted:#9aaba5; --line:#2a3833;
+  --accent:#3fbf8f; --accent-ink:#06130e; --accent-soft:#183a2e; --flag:#e0a84a; --good:#4cc373; --bad:#f2786d;
+  --code-bg:#08100d; --code-ink:#cfeadf; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.proto{background:var(--accent-soft);color:var(--ink);font-size:12.5px;padding-block:6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.topin{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:12px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:17px;letter-spacing:.01em}
+.brand span{color:var(--accent)}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+nav a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:14px}
+nav a[aria-current="page"]{color:var(--ink);background:var(--accent-soft)}
+nav a:focus-visible,button:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:28px 60px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3.4vw,30px);line-height:1.2;margin:0 0 6px;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:500;font-size:18px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 22px;max-width:62ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.ver{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.ver .n{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.ver h3{margin:0;font-size:16px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px}
+.chip.free{border-color:var(--accent);color:var(--accent)}
+.chip.lock{color:var(--flag);border-color:var(--flag)}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:500 14px var(--f-body);padding:9px 16px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin:0 0 26px;font-size:13px;color:var(--muted)}
+.stats b{display:block;font-family:var(--f-display);font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+/* runner */
+.runner{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;align-items:start}
+@media (max-width:820px){.runner{grid-template-columns:minmax(0,1fr)}}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;min-width:0}
+.qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:12px}
+.qtext{font-size:16.5px;margin:0 0 14px}
+pre.code{background:var(--code-bg);color:var(--code-ink);font:14px/1.6 var(--f-mono);padding:14px 16px;border-radius:8px;overflow-x:auto;margin:0 0 14px}
+.kw{color:#7ad3ff}.num{color:#ffc66d}.fn{color:#9fe7b4}
+.tbl{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:6px 12px;text-align:left}
+th{background:var(--accent-soft);font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;background:var(--surface)}
+.opt input{margin-top:4px;accent-color:var(--accent)}
+.opt .l{font-family:var(--f-mono);font-weight:600;color:var(--muted);min-width:1.2em}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.qnav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+aside.sheet{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+.timer{font-family:var(--f-mono);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.timer.low{color:var(--bad)}
+.cells{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0}
+.cell{border:1px solid var(--line);border-radius:6px;padding:6px 0;text-align:center;font:600 13px var(--f-mono);background:transparent;color:var(--ink);cursor:pointer}
+.cell.ans{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.cell.cur{outline:2px solid var(--ink);outline-offset:1px}
+.cell.flag{box-shadow:inset 0 -3px 0 var(--flag)}
+.cell.ghost{opacity:.35;cursor:default}
+.legend{font-size:12px;color:var(--muted);display:grid;gap:3px}
+/* results */
+.score{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.score .big{font-family:var(--f-display);font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}
+.bars{display:grid;gap:10px;margin:8px 0 26px}
+.bar{display:grid;grid-template-columns:minmax(120px,220px) 1fr 48px;gap:10px;align-items:center;font-size:14px}
+.track{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent)}
+.bar.weak .fill{background:var(--bad)}
+.bar.weak .tn{color:var(--bad);font-weight:500}
+.rev{display:grid;gap:12px}
+.ri{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--good);border-radius:8px;padding:14px 16px}
+.ri.wrong{border-left-color:var(--bad)}
+.ri .h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.ri p{margin:6px 0 0}
+.ri .exp{background:var(--accent-soft);border-radius:6px;padding:8px 10px;margin-top:8px;font-size:14px}
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.plan.hi{border:2px solid var(--accent)}
+.price{font-family:var(--f-display);font-size:28px;font-weight:700}
+.price small{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:400}
+.plan ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:grid;gap:4px;flex:1}
+.note{font-size:13px;color:var(--muted);margin-top:14px}
+.toast{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--accent-soft);font-size:14px}
+/* admin */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.drop{border:2px dashed var(--line);border-radius:8px;padding:20px;text-align:center;color:var(--muted);font-size:14px}
+.errs{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px;font-size:14px}
+.errs li{padding:8px 10px;border-radius:6px;border:1px solid var(--line)}
+.errs .e{border-color:var(--bad);color:var(--bad)}
+.errs .ok{border-color:var(--good);color:var(--good)}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.kpi b{display:block;font-family:var(--f-display);font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+.funnel{display:grid;gap:6px;margin-top:12px;font-size:13px}
+.funnel div{display:grid;grid-template-columns:150px 1fr 44px;gap:8px;align-items:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="proto">Прототип / Prototype. Деректер — үлгі (sample data). Төлем тест режимінде. Diploma project, Yerzat Qaldyqan, SE-2408.</div>
+<header class="top"><div class="wrap topin">
+  <div class="brand">Informatika<span>·</span>ҰБТ</div>
+  <nav aria-label="Негізгі мәзір">
+    <a href="#katalog" data-v="katalog">Нұсқалар</a>
+    <a href="#test" data-v="test">Тест</a>
+    <a href="#natije" data-v="natije">Нәтиже</a>
+    <a href="#tarif" data-v="tarif">Тарифтер</a>
+    <a href="#admin" data-v="admin">Әкімші</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+<!-- CATALOGUE -->
+<section id="v-katalog" data-view>
+  <h1>Информатика бойынша ҰБТ нұсқалары</h1>
+  <p class="sub">Әр нұсқа нағыз ҰБТ құрылымымен: 40 тапсырма, уақыт шектеулі. Тесттен кейін әр сұрақтың түсіндірмесі мен тақырыптар бойынша талдау шығады.</p>
+  <div class="stats">
+    <div><b>3 / 12</b>тапсырылған нұсқа</div>
+    <div><b>27 / 50</b>соңғы нәтиже</div>
+    <div><b>Дерекқорлар (SQL)</b>ең әлсіз тақырып</div>
+  </div>
+  <div class="grid" id="cat"></div>
+</section>
+
+<!-- RUNNER -->
+<section id="v-test" data-view hidden>
+  <h1>№1 нұсқа · Информатика</h1>
+  <p class="sub">Прототипте 40 тапсырманың 5-еуі көрсетілген. Жауаптар сервер жағында бірден сақталады.</p>
+  <div class="runner">
+    <div class="qcard" id="qcard" aria-live="polite"></div>
+    <aside class="sheet" aria-label="Жауап парағы">
+      <div class="legend">Қалған уақыт</div>
+      <div class="timer" id="timer">80:00</div>
+      <div class="cells" id="cells"></div>
+      <div class="legend"><span>■ жасыл — жауап берілді</span><span>▁ сары — белгіленген</span></div>
+      <button class="btn" style="width:100%;margin-top:14px" id="finish">Тестті аяқтау</button>
+    </aside>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="v-natije" data-view hidden>
+  <h1>Нәтиже: №1 нұсқа</h1>
+  <div class="score"><span class="big" id="sc">0</span><span id="scof" class="sub" style="margin:0"></span></div>
+  <p class="sub" id="scnote"></p>
+  <h2>Тақырыптар бойынша</h2>
+  <div class="bars" id="bars"></div>
+  <h2>Әр сұрақтың түсіндірмесі</h2>
+  <div class="rev" id="rev"></div>
+</section>
+
+<!-- PRICING -->
+<section id="v-tarif" data-view hidden>
+  <h1>Тарифтер</h1>
+  <p class="sub">Тегін нұсқалар толық түсіндірмемен беріледі. Жазылым барлық нұсқаларды және тақырыптар тарихын ашады.</p>
+  <div class="plans">
+    <div class="plan"><div><h2>Тегін</h2><div class="price">0 ₸</div></div>
+      <ul><li>3 толық нұсқа</li><li>Әр сұраққа түсіндірме</li><li>Соңғы тесттің тақырыптық талдауы</li></ul>
+      <button class="btn ghost" disabled>Ағымдағы тариф</button></div>
+    <div class="plan"><div><h2>Ай сайын</h2><div class="price">1 990 ₸ <small>/ ай</small></div></div>
+      <ul><li>Барлық нұсқалар (жаңалары апта сайын)</li><li>Нәтижелер тарихы мен прогресс графигі</li><li>Әлсіз тақырыптар бойынша ұсыныстар</li></ul>
+      <button class="btn ghost" data-buy="Ай сайын · 1 990 ₸">Таңдау</button></div>
+    <div class="plan hi"><div><h2>ҰБТ-ға дейін</h2><div class="price">7 990 ₸ <small>/ маусымға дейін</small></div></div>
+      <ul><li>Ай сайынғы тарифтің бәрі</li><li>Бір реттік төлем, автотөлем жоқ</li><li>Айына шамамен 1 000 ₸</li></ul>
+      <button class="btn" data-buy="ҰБТ-ға дейін · 7 990 ₸">Таңдау</button></div>
+  </div>
+  <div class="toast" id="buyt" hidden></div>
+  <p class="note">Бағалар пилотта тексерілетін гипотеза (Section 2.5). Төлем провайдері тест режимінде қосылады.</p>
+</section>
+
+<!-- ADMIN -->
+<section id="v-admin" data-view hidden>
+  <h1>Әкімші панелі</h1>
+  <p class="sub">Нұсқаны JSON файлынан импорттау, тексеру және жариялау. Оң жақта пилот көрсеткіштері.</p>
+  <div class="two">
+    <div class="panel">
+      <h2>Нұсқаны импорттау</h2>
+      <div class="drop">version-13.json · 40 тапсырма · 6 сурет</div>
+      <ul class="errs">
+        <li class="ok">Құрылым: 40 тапсырма, түрлері дұрыс</li>
+        <li class="e">№17: түсіндірме бос (FR-08), жариялау бұғатталды</li>
+        <li class="e">№33: сәйкестендіру кілтінде 3 жұп, 4 болуы керек</li>
+        <li class="ok">Тақырып тегтері: 40/40</li>
+      </ul>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn ghost">Алдын ала қарау</button>
+        <button class="btn" disabled>Жариялау</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Соңғы 30 күн (үлгі)</h2>
+      <div class="kpis">
+        <div class="kpi"><b>214</b>тіркелген</div>
+        <div class="kpi"><b>486</b>аяқталған тест</div>
+        <div class="kpi"><b>71%</b>тестті аяқтау үлесі</div>
+        <div class="kpi"><b>5,6%</b>ақылыға өту</div>
+      </div>
+      <div class="funnel" aria-label="Конверсия воронкасы">
+        <div><span>Тіркелу</span><span class="track"><span class="fill" style="display:block;width:100%"></span></span><span>214</span></div>
+        <div><span>Тестті бастау</span><span class="track"><span class="fill" style="display:block;width:78%"></span></span><span>167</span></div>
+        <div><span>Paywall көру</span><span class="track"><span class="fill" style="display:block;width:41%"></span></span><span>88</span></div>
+        <div><span>Төлемді бастау</span><span class="track"><span class="fill" style="display:block;width:10%"></span></span><span>21</span></div>
+        <div><span>Төледі</span><span class="track"><span class="fill" style="display:block;width:5.6%"></span></span><span>12</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const versions=[
+ {n:1,t:"Негізгі деңгей",d:"Орташа",free:true,done:"27/50"},
+ {n:2,t:"Python және циклдар",d:"Орташа",free:true,done:"31/50"},
+ {n:3,t:"Дерекқорлар және SQL",d:"Күрделі",free:true,done:"22/50"},
+ {n:4,t:"Электрондық кестелер",d:"Орташа",free:false},
+ {n:5,t:"Желілер және IP",d:"Күрделі",free:false},
+ {n:6,t:"Аралас, ҰБТ-2026 форматы",d:"Күрделі",free:false}];
+const Q=[
+ {id:1,type:"single",topic:"Ақпаратты өлшеу",pts:1,
+  text:"2 Кбайт ақпарат неше битке тең?",opts:["2048","16 384","16 000","2 000"],key:[1],
+  exp:"1 Кбайт = 1024 байт, 1 байт = 8 бит. 2 · 1024 · 8 = 16 384 бит. 16 000 деген жауап 1 Кбайтты 1000 байт деп санағанда шығады."},
+ {id:2,type:"single",topic:"Python: циклдар",pts:1,
+  text:"Бағдарлама нені шығарады?",
+  code:'<span class="kw">s</span> = <span class="num">0</span>\n<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>, <span class="num">3</span>):\n    s += i\n<span class="fn">print</span>(s)',
+  opts:["12","22","15","10"],key:[0],
+  exp:"range(1, 10, 3) мәндері: 1, 4, 7 (10 кірмейді). 1 + 4 + 7 = 12. 22 жауабы 10-ды да қосқанда шығады, бұл шекараға қатысты жиі қате."},
+ {id:3,type:"single",topic:"Дерекқорлар (SQL)",pts:1,
+  text:"Students кестесіне сұраныс неше жол қайтарады?",
+  table:[["name","grade","score"],["Айгерім","11","92"],["Нұрлан","10","85"],["Дана","11","78"],["Ерасыл","11","81"]],
+  code:'<span class="kw">SELECT</span> name <span class="kw">FROM</span> Students\n<span class="kw">WHERE</span> score &gt; <span class="num">80</span> <span class="kw">AND</span> grade = <span class="num">11</span>;',
+  opts:["1","2","3","4"],key:[1],
+  exp:"Екі шарт бірге орындалуы керек (AND). Айгерім (11, 92) және Ерасыл (11, 81) сәйкес келеді. Нұрлан 10-сынып, Дананың балы 78. Жауап: 2 жол."},
+ {id:4,type:"single",topic:"Санау жүйелері",pts:1,
+  text:"1011₂ + 7₈ қосындысы ондық санау жүйесінде неге тең?",opts:["17","18","19","1110"],key:[1],
+  exp:"1011₂ = 8 + 2 + 1 = 11; 7₈ = 7. 11 + 7 = 18. «1110» жауабы сандарды екілік жүйеде тікелей қосуға тырысқанда пайда болады."},
+ {id:5,type:"multiple",topic:"Желілер",pts:2,
+  text:"Дұрыс IPv4 адрестерін таңдаңыз (бірнеше жауап).",opts:["192.168.1.1","256.10.0.1","10.0.0.255","172.16.300.1"],key:[0,2],
+  exp:"IPv4 адресінің әр октеті 0 мен 255 аралығында болады. 256 және 300 бұл шектен асады. Ұпай ҰБТ ережесімен: бәрі дұрыс болса 2, бір қате болса 1."}];
+const ans={},flags={};let cur=0,left=80*60,tick=null,submitted=false;
+
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function renderCat(){
+  document.getElementById("cat").innerHTML=versions.map(v=>`<article class="ver">
+   <div class="n">Нұсқа №${v.n}</div><h3>${v.t}</h3>
+   <div class="meta"><span>40 тапсырма</span><span>80 мин</span><span>${v.d}</span></div>
+   <div class="meta">${v.free?'<span class="chip free">Тегін</span>':'<span class="chip lock">🔒 Premium</span>'}${v.done?`<span class="chip">Нәтиже ${v.done}</span>`:""}</div>
+   ${v.free?`<a class="btn" href="#test">${v.done?"Қайта тапсыру":"Бастау"}</a>`:`<a class="btn ghost" href="#tarif">Ашу</a>`}
+  </article>`).join("")}
+function renderQ(){
+  const q=Q[cur],type=q.type==="multiple"?"checkbox":"radio",L="ABCD";
+  document.getElementById("qcard").innerHTML=`
+   <div class="qhead"><span>Тапсырма ${q.id} / 40 · ${q.type==="multiple"?"бірнеше жауап":"бір жауап"}</span><span>${q.topic}</span></div>
+   <p class="qtext">${esc(q.text)}</p>
+   ${q.table?`<div class="tbl"><table><thead><tr>${q.table[0].map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${q.table.slice(1).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`:""}
+   ${q.code?`<pre class="code">${q.code}</pre>`:""}
+   <div class="opts">${q.opts.map((o,i)=>`<label class="opt"><input type="${type}" name="q${q.id}" id="q${q.id}o${i}" value="${i}" ${(ans[q.id]||[]).includes(i)?"checked":""}><span class="l">${L[i]}</span><span>${esc(o)}</span></label>`).join("")}</div>
+   <div class="qnav">
+     <button class="btn ghost" id="prev" ${cur===0?"disabled":""}>← Алдыңғы</button>
+     <button class="btn ghost" id="flag">${flags[q.id]?"Белгіні алу":"Белгілеу"}</button>
+     <button class="btn" id="next" ${cur===Q.length-1?"disabled":""}>Келесі →</button>
+   </div>`;
+  document.querySelectorAll(`#qcard input`).forEach(inp=>inp.addEventListener("change",()=>{
+    ans[q.id]=[...document.querySelectorAll(`#qcard input:checked`)].map(x=>+x.value);renderCells()}));
+  document.getElementById("prev").onclick=()=>{cur--;renderQ()};
+  document.getElementById("next").onclick=()=>{cur++;renderQ()};
+  document.getElementById("flag").onclick=()=>{flags[q.id]=!flags[q.id];renderQ()};
+  renderCells()}
+function renderCells(){
+  let h="";for(let i=1;i<=40;i++){const q=Q.findIndex(x=>x.id===i);
+    if(q<0){h+=`<span class="cell ghost">${i}</span>`;continue}
+    const c=["cell"];if((ans[i]||[]).length)c.push("ans");if(q===cur)c.push("cur");if(flags[i])c.push("flag");
+    h+=`<button class="${c.join(" ")}" data-q="${q}" aria-label="Тапсырма ${i}">${i}</button>`}
+  const el=document.getElementById("cells");el.innerHTML=h;
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>{cur=+b.dataset.q;renderQ()})}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function startTimer(){if(tick)return;tick=setInterval(()=>{if(left>0)left--;const t=document.getElementById("timer");t.textContent=fmt(left);t.classList.toggle("low",left<300);if(left===0)finish()},1000)}
+function score(q,a){a=a||[];if(q.type==="single")return a.length===1&&a[0]===q.key[0]?1:0;
+  const wrong=a.filter(x=>!q.key.includes(x)).length+q.key.filter(x=>!a.includes(x)).length;
+  return wrong===0?2:wrong===1?1:0}
+function finish(){submitted=true;clearInterval(tick);tick=null;location.hash="natije"}
+function renderRes(){
+  const L="ABCD";let tot=0,max=0;const top={};
+  Q.forEach(q=>{const p=score(q,ans[q.id]);tot+=p;max+=q.pts;top[q.topic]=top[q.topic]||[0,0];top[q.topic][0]+=p;top[q.topic][1]+=q.pts});
+  document.getElementById("sc").textContent=tot;
+  document.getElementById("scof").textContent=`/ ${max} ұпай (прототипте 5 тапсырма)`;
+  document.getElementById("scnote").textContent=submitted?"Жауаптарыңыз бағаланды. Әлсіз тақырып қызылмен белгіленген.":"Тест әлі тапсырылмаған, сондықтан нәтиже бос жауаптармен есептелді. «Тест» бетінде жауап беріп, «Тестті аяқтау» батырмасын басыңыз.";
+  const ent=Object.entries(top).map(([k,[a,b]])=>[k,Math.round(a/b*100)]);const min=Math.min(...ent.map(e=>e[1]));
+  document.getElementById("bars").innerHTML=ent.map(([k,v])=>`<div class="bar ${v===min?"weak":""}"><span class="tn">${k}</span><span class="track"><span class="fill" style="display:block;width:${v}%"></span></span><span style="font-variant-numeric:tabular-nums">${v}%</span></div>`).join("");
+  document.getElementById("rev").innerHTML=Q.map(q=>{const a=ans[q.id]||[],p=score(q,a);
+    return `<div class="ri ${p<q.pts?"wrong":""}"><div class="h"><span>№${q.id} · ${q.topic}</span><span>${p} / ${q.pts} ұпай</span></div>
+    <p>${esc(q.text)}</p><p><b>Сіздің жауабыңыз:</b> ${a.length?a.map(i=>L[i]).join(", "):"жауап жоқ"} · <b>Дұрыс жауап:</b> ${q.key.map(i=>L[i]+") "+esc(q.opts[i])).join(", ")}</p>
+    <div class="exp">${esc(q.exp)}</div></div>`}).join("")}
+function show(){
+  const v=(location.hash||"#katalog").slice(1);const ok=["katalog","test","natije","tarif","admin"].includes(v)?v:"katalog";
+  document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.id!=="v-"+ok);
+  document.querySelectorAll("nav a").forEach(a=>{if(a.dataset.v===ok)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  if(ok==="test"){renderQ();startTimer()}
+  if(ok==="natije")renderRes();
+  window.scrollTo(0,0)}
+document.getElementById("finish").onclick=finish;
+document.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{const t=document.getElementById("buyt");t.hidden=false;t.textContent=`Тест режимі: «${b.dataset.buy}» үшін төлем бетіне өту симуляцияланды. Нақты төлем алынбайды.`});
+window.addEventListener("hashchange",show);
+renderCat();show();
+</script>
+
+</body>
+</html>
