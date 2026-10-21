@@ -1,0 +1,33 @@
+@startuml system-context
+title System Context Diagram — UNT Informatics Prep Platform
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam rectangle {
+  BackgroundColor<<system>> #1F6FEB
+  FontColor<<system>> white
+  BorderColor<<system>> #1F6FEB
+  BackgroundColor<<external>> #EEEEEE
+  BorderColor<<external>> #888888
+}
+left to right direction
+
+actor "Guest\n(UNT candidate)" as Guest
+actor "Student\n(free / premium)" as Student
+actor "Administrator\n(content owner)" as Admin
+
+rectangle "UNT Informatics Prep Platform\n\n[Next.js web application + PostgreSQL]\nMock tests in UNT format, scoring,\nexplanations, topic analytics, subscriptions" <<system>> as Sys
+
+rectangle "Payment provider\n(local acquiring / aggregator)" <<external>> as Pay
+rectangle "Email service\n(SMTP / transactional email)" <<external>> as Mail
+rectangle "Hosting & managed DB\n(Vercel, Neon/Supabase)" <<external>> as Host
+rectangle "NTC UNT specification\n(public document)" <<external>> as NTC
+
+Guest --> Sys : browses catalogue,\ntries demo test, registers
+Student --> Sys : takes timed tests,\nviews results, subscribes
+Admin --> Sys : imports & publishes test versions,\nviews analytics
+Sys --> Pay : creates checkout session
+Pay --> Sys : payment webhook (signed)
+Sys --> Mail : verification & reset emails
+Sys ..> Host : deployed on / stores data in
+NTC ..> Admin : item blueprint & topics\n(used offline when writing items)
+@enduml

@@ -1,0 +1,48 @@
+@startuml use-case
+title Use Case Diagram — UNT Informatics Prep Platform (MVP)
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+left to right direction
+
+actor Guest
+actor Student
+actor Administrator as Admin
+actor "Payment provider" as Pay <<external>>
+Guest <|-- Student
+
+rectangle "UNT Informatics Prep Platform" {
+  usecase "UC1 Browse test catalogue\n(FR-03)" as UC1
+  usecase "UC2 Take demo test\n(FR-04)" as UC2
+  usecase "UC3 Register & verify email\n(FR-01)" as UC3
+  usecase "UC4 Log in / reset password\n(FR-02)" as UC4
+  usecase "UC5 Take timed mock test\n(FR-05, FR-07)" as UC5
+  usecase "UC6 Score attempt\n(FR-06)" as UC6
+  usecase "UC7 View results, explanations\n& topic breakdown (FR-08, FR-09)" as UC7
+  usecase "UC8 View history & progress\n(FR-10)" as UC8
+  usecase "UC9 Buy subscription\n(FR-12)" as UC9
+  usecase "UC10 Check access / paywall\n(FR-11, FR-13)" as UC10
+  usecase "UC11 Report item error\n(FR-18)" as UC11
+  usecase "UC12 Import & preview version\n(FR-14)" as UC12
+  usecase "UC13 Publish / set free-premium\n(FR-15)" as UC13
+  usecase "UC14 View dashboard & export events\n(FR-16, FR-17)" as UC14
+  usecase "UC15 Review error reports\n(FR-18)" as UC15
+}
+
+Guest --> UC1
+Guest --> UC2
+Guest --> UC3
+Student --> UC4
+Student --> UC5
+Student --> UC7
+Student --> UC8
+Student --> UC9
+Student --> UC11
+UC5 ..> UC10 : <<include>>
+UC5 ..> UC6 : <<include>>
+UC6 ..> UC7 : <<include>>
+UC9 --> Pay
+Admin --> UC12
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+@enduml

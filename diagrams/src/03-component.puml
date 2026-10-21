@@ -1,0 +1,69 @@
+@startuml component
+title Component Diagram (draft) — modular monolith
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam componentStyle uml2
+
+actor Student
+actor Administrator as Admin
+
+node "Browser" {
+  [Student UI\n(Next.js React pages:\ncatalogue, runner, results)] as UI
+  [Admin UI\n(import, preview, dashboard)] as AUI
+}
+
+node "Next.js server (Vercel)" {
+  [Auth module\n(Auth.js, sessions)] as Auth
+  [Catalogue module] as Cat
+  [Test Session module\n(timer, autosave, resume)] as Sess
+  [Scoring engine\n(UNT rules, partial credit)] as Score
+  [Results & Analytics module\n(topic mastery, history)] as Res
+  [Billing module\n(PaymentProvider interface,\nentitlements)] as Bill
+  [Content Admin module\n(JSON import, validation)] as Adm
+  [Event tracker] as Ev
+  [Item renderer\n(Shiki code, tables)] as Rend
+  interface "REST /api/webhooks/payment" as WH
+  [Data access layer\n(Prisma client, repositories)] as DAL
+}
+
+database "PostgreSQL\n(Prisma)" as DB {
+  [users, subscriptions]
+  [versions, items, topics]
+  [attempts, answers]
+  [events, error_reports]
+}
+
+cloud "Payment provider" as Pay
+cloud "Email service" as Mail
+
+Student --> UI
+Admin --> AUI
+UI --> Auth
+UI --> Cat
+UI --> Sess
+UI --> Res
+UI --> Bill
+AUI --> Adm
+AUI --> Res
+Cat --> Bill : check entitlement
+Sess --> Bill : check entitlement
+Sess --> Score : on submit
+Score --> Res
+Sess --> Rend
+Adm --> Rend : preview
+Auth --> Mail
+Bill --> Pay : checkout
+Pay --> WH
+WH --> Bill
+Sess --> Ev
+Bill --> Ev
+Auth --> Ev
+Auth -[#888]-> DAL
+Cat -[#888]-> DAL
+Sess -[#888]-> DAL
+Res -[#888]-> DAL
+Bill -[#888]-> DAL
+Adm -[#888]-> DAL
+Ev -[#888]-> DAL
+DAL --> DB : SQL
+@enduml
