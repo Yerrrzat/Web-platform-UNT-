@@ -35,7 +35,7 @@ The plan answers two questions:
 
 ## 9.3 Measurement conditions
 
-- **Pilot:** 4 weeks between February and March 2027 with **≥ 30 students** on the Mathematics–Informatics profile. Recruited through informatics teachers and the author's student groups, with consent (parental consent for under-18s). Only pseudonymous IDs are used in the analysis.
+- **Pilot:** 4 weeks in March 2027 (after development is completed by 28 February 2027, as set in the supervisor's plan) with **≥ 30 students** on the Mathematics–Informatics profile. Recruited through informatics teachers and the author's student groups, with consent (parental consent for under-18s). Only pseudonymous IDs are used in the analysis.
 - **Devices:** students' own phones and computers. The device type is logged to compare mobile and desktop use.
 - **Content:** ≥ 10 versions of comparable difficulty (the blueprint is checked against the specification), so that score changes reflect learning rather than easier versions.
 - **Payments:** test mode, or real payments if the business is registered by then. Without real payments, M7 is measured as "checkout started" and reported as *intent*, not revenue.
