@@ -42,7 +42,7 @@ This section separates **verified findings** (backed by data, documents or inter
 
 ## 2.4 Interview results (E4)
 
-> **Fill in after the interviews. Do not invent responses.** Keep only anonymised notes.
+> **Status (October 2026):** interviews are being scheduled with students of the Mathematics–Informatics profile and informatics teachers. Results will be added as anonymised notes after each interview (task UNT-3).
 
 | ID | Role / grade | Language | Date | Key statements (short) | Supports finding # | Contradicts / new insight |
 |---|---|---|---|---|---|---|
@@ -52,7 +52,7 @@ This section separates **verified findings** (backed by data, documents or inter
 | P4 |  |  |  |  |  |  |
 | P5 |  |  |  |  |  |  |
 
-**Summary of interview findings:** *(3–5 sentences after the interviews.)*
+**Summary of interview findings:** will be added after the interviews are completed (UNT-3).
 
 ## 2.5 Verified findings vs. assumptions
 

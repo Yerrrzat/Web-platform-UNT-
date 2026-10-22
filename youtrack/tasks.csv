@@ -25,5 +25,5 @@ UNT-23,Event tracking and admin dashboard,Feature,Major,To Do,Yerzat Qaldyqan,20
 UNT-24,Prepare and import 10 versions with explanations,Task,Critical,To Do,Yerzat Qaldyqan,2027-01-30,S5–S7,10 published versions,Validator passes; teacher review of 1 version,O5
 UNT-25,Hallway usability test of prototype (3 students),Task,Normal,To Do,Yerzat Qaldyqan,2026-11-14,S2,Usability notes,Task success/time recorded for S1–S3,NFR-06
 UNT-26,Deploy staging and production,Task,Major,To Do,Yerzat Qaldyqan,2027-01-30,S7,Live URL,Lighthouse ≥80; uptime monitor active,NFR-01 NFR-11
-UNT-27,Pilot with ≥30 students (4 weeks),Task,Critical,To Do,Yerzat Qaldyqan,2027-03-15,Pilot,Pilot dataset + survey,Metrics M1–M9 computed,O6
+UNT-27,Pilot with ≥30 students (4 weeks),Task,Critical,To Do,Yerzat Qaldyqan,2027-03-28,Pilot,Pilot dataset + survey,Metrics M1–M9 computed,O6
 UNT-28,Commercialization assessment,Task,Critical,To Do,Yerzat Qaldyqan,2027-04-15,Analysis,Business model; unit economics; go/no-go,Uses pilot data; break-even computed,O7

@@ -37,9 +37,10 @@ This is an **individual project**, so one person has several roles. The supervis
 | M0 Topic approval | Oct 2026 | Approved diploma topic | Done |
 | **M1 Probationary period 1** (`prob-period-1`) | **24 Oct 2026** | Proposal, evidence, literature review, comparisons, requirements, diagrams, prototype, verification plan, PM plan | In progress (this submission) |
 | M2 Core MVP (internal) | 19 Dec 2026 | Auth, import, renderer, test session, scoring, results | Planned |
-| M3 Monetization + content | 30 Jan 2027 | Billing (test mode), events/dashboard, 10 versions, deployment | Planned |
+| M3 MVP ready (supervisor checkpoint) | 31 Jan 2027 | Billing (test mode), events/dashboard, 10 versions, deployment | Planned |
+| M3a Development complete (supervisor checkpoint) | 28 Feb 2027 | Testing finished, bugs fixed, release for pilot | Planned |
 | M4 Pre-defense 2 | Date set by the school (expected Feb 2027) | Working MVP demo, test reports | Planned |
-| M5 Pilot complete | 15 Mar 2027 | Pilot data, survey, metrics M1–M9 | Planned |
+| M5 Pilot complete | 28 Mar 2027 | Pilot data, survey, metrics M1–M9 | Planned |
 | M6 Final pre-defense | Date set by the school (expected Apr–May 2027) | Commercialization assessment, final report | Planned |
 
 ## 10.5 Backlog snapshot (top items)
@@ -54,7 +55,7 @@ This is an **individual project**, so one person has several roles. The supervis
 | UNT-15 | Database schema and migrations | Critical | 7 Nov 2026 | To do |
 | UNT-19 / UNT-20 | Test session + scoring engine | Critical | 5 Dec 2026 | To do |
 | UNT-22 | Freemium access and subscription billing | Critical | 16 Jan 2027 | To do |
-| UNT-27 | Pilot with ≥ 30 students | Critical | 15 Mar 2027 | To do |
+| UNT-27 | Pilot with ≥ 30 students | Critical | 28 Mar 2027 | To do |
 | UNT-28 | Commercialization assessment | Critical | 15 Apr 2027 | To do |
 
 The full backlog (28 issues) is in `youtrack/tasks.csv`.

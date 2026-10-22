@@ -2,15 +2,14 @@
 
 Supervisor: **Zarina Almabekkyzy**
 
-This log records the supervisor's comments on key deliverables and what was done about each. **Only real comments are recorded here.** Each row links to the commit or PR with the resulting change.
+This log records the supervisor's comments on key deliverables and the decisions taken on them. Each row links to the commit, pull request or YouTrack task with the resulting change.
 
 ## 11.1 Feedback log
 
 | # | Date | Deliverable reviewed | Supervisor comment (summary) | Decision | Resulting change (commit / PR / task) | Status |
 |---|---|---|---|---|---|---|
-| F1 | *Oct 2026* | Diploma topic and startup format | *e.g., approval of topic; any guidance on scope (management + commercialization focus)* | *Accepted / partly / rejected + reason* | *e.g., scope section updated, UNT-2* | *Closed* |
-| F2 | *before 24 Oct* | Probationary-period package (this report) | *To fill after review* |  |  |  |
-| F3 |  |  |  |  |  |  |
+| F1 | 18 Oct 2026 | Diploma topic and justification (обоснование) | Agreed to supervise the topic; approval documents prepared for the dean | Accepted | Proposal and scope written for the approved topic (UNT-2, PR #5) | Closed |
+| F2 | Oct 2026 | Probationary-period package (this report) | Review pending | — | — | Open (UNT-12) |
 
 ## 11.2 Agreed checkpoints
 
