@@ -1,0 +1,210 @@
+// Data model: diagrams/src/04-data-model.puml (docs/07)
+generator client {
+  provider   = "prisma-client-js"
+  // Rust-free client: no native query engine binary, works through the pg driver
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  admin
+}
+
+enum Plan {
+  monthly
+  until_unt
+}
+
+enum SubscriptionStatus {
+  active
+  expired
+  cancelled
+}
+
+enum PaymentStatus {
+  pending
+  succeeded
+  failed
+}
+
+enum VersionAccess {
+  free
+  premium
+}
+
+enum VersionStatus {
+  draft
+  published
+}
+
+enum ItemType {
+  single
+  multiple
+  matching
+  context
+}
+
+enum ReportStatus {
+  open
+  fixed
+  rejected
+}
+
+model User {
+  id              String          @id @default(uuid()) @db.Uuid
+  email           String          @unique
+  passwordHash    String?         @map("password_hash")
+  displayName     String          @map("display_name")
+  grade           Int?
+  locale          String          @default("kk")
+  emailVerifiedAt DateTime?       @map("email_verified_at")
+  role            Role            @default(student)
+  createdAt       DateTime        @default(now()) @map("created_at")
+  subscriptions   Subscription[]
+  attempts        Attempt[]
+  events          Event[]
+  errorReports    ErrorReport[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id          String             @id @default(uuid()) @db.Uuid
+  userId      String             @map("user_id") @db.Uuid
+  plan        Plan
+  status      SubscriptionStatus
+  paidUntil   DateTime           @map("paid_until")
+  providerRef String?            @map("provider_ref")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments    Payment[]
+
+  @@index([userId])
+  @@map("subscriptions")
+}
+
+model Payment {
+  id              String        @id @default(uuid()) @db.Uuid
+  subscriptionId  String        @map("subscription_id") @db.Uuid
+  amountKzt       Int           @map("amount_kzt")
+  status          PaymentStatus
+  providerEventId String        @unique @map("provider_event_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model TestVersion {
+  id           String        @id @default(uuid()) @db.Uuid
+  number       Int           @unique
+  title        String
+  difficulty   Int           @default(2)
+  access       VersionAccess @default(free)
+  status       VersionStatus @default(draft)
+  timeLimitMin Int           @map("time_limit_min")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  items        Item[]
+  attempts     Attempt[]
+
+  @@map("test_versions")
+}
+
+model Item {
+  id           String        @id @default(uuid()) @db.Uuid
+  versionId    String        @map("version_id") @db.Uuid
+  position     Int
+  type         ItemType
+  body         Json
+  options      Json
+  answerKey    Json          @map("answer_key")
+  explanation  String
+  maxPoints    Int           @map("max_points")
+  version      TestVersion   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  topics       ItemTopic[]
+  answers      Answer[]
+  errorReports ErrorReport[]
+
+  @@unique([versionId, position])
+  @@map("items")
+}
+
+model Topic {
+  id     String      @id @default(uuid()) @db.Uuid
+  code   String      @unique
+  nameKk String      @map("name_kk")
+  nameRu String      @map("name_ru")
+  items  ItemTopic[]
+
+  @@map("topics")
+}
+
+model ItemTopic {
+  itemId  String @map("item_id") @db.Uuid
+  topicId String @map("topic_id") @db.Uuid
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, topicId])
+  @@map("item_topics")
+}
+
+model Attempt {
+  id          String      @id @default(uuid()) @db.Uuid
+  userId      String      @map("user_id") @db.Uuid
+  versionId   String      @map("version_id") @db.Uuid
+  startedAt   DateTime    @default(now()) @map("started_at")
+  deadlineAt  DateTime    @map("deadline_at")
+  submittedAt DateTime?   @map("submitted_at")
+  score       Int?
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  version     TestVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+
+  @@index([userId, versionId])
+  @@map("attempts")
+}
+
+model Answer {
+  id        String   @id @default(uuid()) @db.Uuid
+  attemptId String   @map("attempt_id") @db.Uuid
+  itemId    String   @map("item_id") @db.Uuid
+  response  Json?
+  points    Int?
+  flagged   Boolean  @default(false)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  attempt   Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, itemId])
+  @@map("answers")
+}
+
+model Event {
+  id        BigInt   @id @default(autoincrement())
+  userId    String?  @map("user_id") @db.Uuid
+  name      String
+  props     Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([name, createdAt])
+  @@map("events")
+}
+
+model ErrorReport {
+  id      String       @id @default(uuid()) @db.Uuid
+  userId  String       @map("user_id") @db.Uuid
+  itemId  String       @map("item_id") @db.Uuid
+  comment String
+  status  ReportStatus @default(open)
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item    Item         @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@map("error_reports")
+}
