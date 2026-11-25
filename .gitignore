@@ -24,3 +24,7 @@ Thumbs.db
 .idea/
 # personal data from interviews / pilot (never commit)
 data/private/
+
+# TypeScript / Next.js generated
+*.tsbuildinfo
+next-env.d.ts

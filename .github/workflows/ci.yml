@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: unt
+          POSTGRES_PASSWORD: unt
+          POSTGRES_DB: unt_prep
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U unt"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://unt:unt@127.0.0.1:5432/unt_prep
+      AUTH_SECRET: ci-secret-ci-secret-ci-secret-ci-secret-123
+      PAYMENT_PROVIDER: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npm run db:seed
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run build
